@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MapsSkyrise</string>
+    <string name="google_maps_API_key" translatable="false">AIzaSyCnqmokrxrbM7gQa832EmF6n3OVTUdA4Pg</string>
 </resources>
