@@ -7,9 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -19,8 +23,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import mateusz.grabarski.mapsskyrise.adapters.PlacesAdapter;
+import mateusz.grabarski.mapsskyrise.adapters.listeners.PlaceListener;
 import mateusz.grabarski.mapsskyrise.impl.MapsPresenterImpl;
+import mateusz.grabarski.mapsskyrise.models.Result;
 import mateusz.grabarski.mapsskyrise.utils.DialogsUtils;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
@@ -32,14 +43,24 @@ import static mateusz.grabarski.mapsskyrise.Constants.DEFAULT_ZOOM;
 import static mateusz.grabarski.mapsskyrise.Constants.FINE_LOCATION;
 
 @RuntimePermissions
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, MapsContract.View {
+public class MainActivity extends AppCompatActivity implements
+        OnMapReadyCallback,
+        MapsContract.View {
 
     private static final String TAG = "MainActivity";
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
+    @BindView(R.id.activity_main_no_items_place_holder)
+    CardView noItemsPlaceHolder;
+
+    @BindView(R.id.activity_main_places_rv)
+    RecyclerView placesRv;
+
     private MapsContract.Presenter mPresenter;
     private GoogleMap mMap;
+    private PlacesAdapter mAdapter;
+    private List<Result> mPlaces;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ButterKnife.bind(this);
 
         mPresenter = new MapsPresenterImpl(this, this);
+        mPlaces = new ArrayList<>();
+
+        mAdapter = new PlacesAdapter(this, mPlaces, (PlaceListener) mPresenter);
+        placesRv.setLayoutManager(new LinearLayoutManager(this));
+        placesRv.setAdapter(mAdapter);
     }
 
     @Override
@@ -109,10 +135,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
-                // TODO: 07.11.2017 search places by string
                 mPresenter.searchPlaces(newText);
-
                 return true;
             }
         });
@@ -149,5 +172,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void moveCamera(LatLng latLng) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+    }
+
+    @Override
+    public void showEmptyPlaceHolder() {
+        placesRv.setVisibility(View.GONE);
+        noItemsPlaceHolder.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showList() {
+        placesRv.setVisibility(View.VISIBLE);
+        noItemsPlaceHolder.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void displayPlaces(List<Result> places) {
+        mPlaces.clear();
+        mPlaces.addAll(places);
+        mAdapter.notifyDataSetChanged();
     }
 }

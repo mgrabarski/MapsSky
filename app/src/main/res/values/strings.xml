@@ -8,4 +8,5 @@
     <string name="never_ask_again_location_permissions">Please go to application settings and grand location permissions.</string>
     <string name="search">Search</string>
     <string name="my_location">My location</string>
+    <string name="search_place">Search place</string>
 </resources>

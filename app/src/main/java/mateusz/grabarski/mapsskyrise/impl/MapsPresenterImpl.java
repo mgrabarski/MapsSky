@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 import mateusz.grabarski.mapsskyrise.MapsContract;
+import mateusz.grabarski.mapsskyrise.adapters.listeners.PlaceListener;
 import mateusz.grabarski.mapsskyrise.models.Result;
 import mateusz.grabarski.mapsskyrise.utils.DeviceLocation;
 import mateusz.grabarski.mapsskyrise.utils.PlacesHandler;
@@ -15,7 +16,10 @@ import mateusz.grabarski.mapsskyrise.utils.PlacesHandler;
  * Created by MGrabarski on 07.11.2017.
  */
 
-public class MapsPresenterImpl implements MapsContract.Presenter, DeviceLocation.DeviceLocationListener, PlacesHandler.PlacesListener {
+public class MapsPresenterImpl implements MapsContract.Presenter,
+        DeviceLocation.DeviceLocationListener,
+        PlacesHandler.PlacesListener,
+        PlaceListener {
 
     private MapsContract.View mView;
     private DeviceLocation mDeviceLocation;
@@ -37,6 +41,7 @@ public class MapsPresenterImpl implements MapsContract.Presenter, DeviceLocation
     @Override
     public void mapIsReady() {
         mDeviceLocation.refreshLocation(true);
+        mView.showEmptyPlaceHolder();
     }
 
     @Override
@@ -51,6 +56,12 @@ public class MapsPresenterImpl implements MapsContract.Presenter, DeviceLocation
 
     @Override
     public void onPlacesLoaded(List<Result> places) {
+        mView.showList();
+        mView.displayPlaces(places);
+    }
+
+    @Override
+    public void onPlaceSelected(Result result) {
 
     }
 }
