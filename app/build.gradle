@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 def playServices = "11.4.2"
 def butterKnife = "8.8.1"
 def supportVersion = "26.1.0"
+def permissionDispatch = "3.0.1"
 
 android {
     compileSdkVersion 26
@@ -32,4 +33,8 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:${butterKnife}"
     compile "com.google.android.gms:play-services-places:${playServices}"
     compile "com.google.android.gms:play-services-location:${playServices}"
+    compile("com.github.hotchemi:permissionsdispatcher:${permissionDispatch}") {
+        exclude module: "support-v13"
+    }
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatch}"
 }
