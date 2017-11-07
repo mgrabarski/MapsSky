@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MapsSkyrise</string>
     <string name="google_maps_API_key" translatable="false">AIzaSyCnqmokrxrbM7gQa832EmF6n3OVTUdA4Pg</string>
+    <string name="google_places_API_key" translatable="false">AIzaSyCFeoqCVuEc9ZJXgSplcDP3fKjB3FxPG8g</string>
     <string name="information">Information</string>
     <string name="ok">Ok</string>
     <string name="denine_location_permissions">Application need this permissions for correct working.</string>

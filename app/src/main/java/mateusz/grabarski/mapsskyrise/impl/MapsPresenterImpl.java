@@ -1,38 +1,32 @@
 package mateusz.grabarski.mapsskyrise.impl;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.List;
+
 import mateusz.grabarski.mapsskyrise.MapsContract;
+import mateusz.grabarski.mapsskyrise.models.Result;
 import mateusz.grabarski.mapsskyrise.utils.DeviceLocation;
+import mateusz.grabarski.mapsskyrise.utils.PlacesHandler;
 
 /**
  * Created by MGrabarski on 07.11.2017.
  */
 
-public class MapsPresenterImpl implements MapsContract.Presenter, DeviceLocation.DeviceLocationListener, GoogleApiClient.OnConnectionFailedListener {
+public class MapsPresenterImpl implements MapsContract.Presenter, DeviceLocation.DeviceLocationListener, PlacesHandler.PlacesListener {
 
     private MapsContract.View mView;
     private DeviceLocation mDeviceLocation;
-    private GoogleApiClient mGoogleApiClient;
+    private PlacesHandler mPlacesHandler;
 
     public MapsPresenterImpl(AppCompatActivity activity, MapsContract.View mView) {
         this.mView = mView;
         mDeviceLocation = new DeviceLocation(activity, this);
         mDeviceLocation.refreshLocation(false);
 
-        mGoogleApiClient = new GoogleApiClient
-                .Builder(activity)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(activity, this)
-                .build();
+        mPlacesHandler = new PlacesHandler(activity, this);
     }
 
     @Override
@@ -47,7 +41,7 @@ public class MapsPresenterImpl implements MapsContract.Presenter, DeviceLocation
 
     @Override
     public void searchPlaces(String text) {
-
+        mPlacesHandler.searchPlaces(mDeviceLocation.getDeviceLocation(), text);
     }
 
     @Override
@@ -56,7 +50,7 @@ public class MapsPresenterImpl implements MapsContract.Presenter, DeviceLocation
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onPlacesLoaded(List<Result> places) {
 
     }
 }

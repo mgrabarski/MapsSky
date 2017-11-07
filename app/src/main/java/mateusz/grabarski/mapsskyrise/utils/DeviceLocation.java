@@ -1,6 +1,5 @@
 package mateusz.grabarski.mapsskyrise.utils;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -16,7 +15,6 @@ import com.google.android.gms.tasks.Task;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static mateusz.grabarski.mapsskyrise.Constants.DEFAULT_ZOOM;
 
 /**
  * Created by MGrabarski on 07.11.2017.
