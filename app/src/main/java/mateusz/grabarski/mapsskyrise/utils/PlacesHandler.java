@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +19,8 @@ import mateusz.grabarski.mapsskyrise.models.Result;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static mateusz.grabarski.mapsskyrise.Constants.SEARCH_LIMIT;
 
 /**
  * Created by MGrabarski on 07.11.2017.
@@ -71,10 +74,23 @@ public class PlacesHandler {
             MatchToday matchToday = new Gson().fromJson(s, MatchToday.class);
 
             if (matchToday != null && matchToday.getResults() != null)
-                mPlacesListener.onPlacesLoaded(matchToday.getResults());
+                mPlacesListener.onPlacesLoaded(getResultsByLimit(matchToday.getResults()));
             else
                 mPlacesListener.onPlacesLoaded(Collections.<Result>emptyList());
         }
+    }
+
+    private List<Result> getResultsByLimit(List<Result> results) {
+        List<Result> limited = new ArrayList<>();
+
+        if (results.size() <= SEARCH_LIMIT)
+            return results;
+
+        for (int i = 0; i < SEARCH_LIMIT; i++) {
+            limited.add(results.get(i));
+        }
+
+        return limited;
     }
 
     private String getJson(String url) throws IOException {

@@ -62,6 +62,6 @@ public class MapsPresenterImpl implements MapsContract.Presenter,
 
     @Override
     public void onPlaceSelected(Result result) {
-
+        mView.moveCamera(new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()));
     }
 }

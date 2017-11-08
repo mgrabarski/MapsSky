@@ -11,6 +11,8 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,7 @@ import mateusz.grabarski.mapsskyrise.adapters.listeners.PlaceListener;
 import mateusz.grabarski.mapsskyrise.impl.MapsPresenterImpl;
 import mateusz.grabarski.mapsskyrise.models.Result;
 import mateusz.grabarski.mapsskyrise.utils.DialogsUtils;
+import mateusz.grabarski.mapsskyrise.widgets.CustomInfoWindowAdapter;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
 import permissions.dispatcher.OnPermissionDenied;
@@ -130,12 +134,14 @@ public class MainActivity extends AppCompatActivity implements
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit: ");
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mPresenter.searchPlaces(newText);
+                if (!TextUtils.isEmpty(newText))
+                    mPresenter.searchPlaces(newText);
                 return true;
             }
         });
@@ -188,8 +194,32 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void displayPlaces(List<Result> places) {
+        refreshList(places);
+
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MainActivity.this));
+        mMap.clear();
+
+        refreshMapMarkers(places);
+    }
+
+    private void refreshList(List<Result> places) {
         mPlaces.clear();
         mPlaces.addAll(places);
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void refreshMapMarkers(List<Result> places) {
+
+        for (Result result : places) {
+            String info = getString(R.string.name_info) + result.getName() + "\n" +
+                    getString(R.string.address_info) + result.getVicinity() + "\n";
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()));
+            markerOptions.title(result.getName());
+            markerOptions.snippet(info);
+
+            mMap.addMarker(markerOptions);
+        }
     }
 }

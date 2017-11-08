@@ -14,4 +14,6 @@ public class Constants {
     static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
 
     public static final String SEARCHING_RADIUS = "10000"; // 10 km
+
+    public static final int SEARCH_LIMIT = 3;
 }
